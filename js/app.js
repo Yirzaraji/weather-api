@@ -1,11 +1,29 @@
-console.log("coucou")
-
 const form = document.querySelector(".top-banner form");
 const input = document.querySelector(".top-banner input");
 const list = document.querySelector(".cities");
 const msg = document.querySelector(".top-banner .msg");
 
-console.log(apiKey)
+//test localStorage
+localStorage.setItem('categorie', 'hack');
+var cat = localStorage.getItem('categorie');
+//localStorage.removeItem('categorie');
+console.log(cat)
+console.log(navigator.geolocation)
+var x = document.getElementById("demo");
+
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(showPosition);
+  } else {
+    x.innerHTML = "Geolocation is not supported by this browser.";
+  }
+}
+
+function showPosition(position) {
+  x.innerHTML = "Latitude: " + position.coords.latitude +
+  "<br>Longitude: " + position.coords.longitude;
+}
+
 form.addEventListener("submit", e => 
 {
     e.preventDefault();
@@ -26,10 +44,10 @@ form.addEventListener("submit", e =>
             const li = document.createElement("li");
             li.classList.add("city");
             const markup = `
-            <h2 class="city-name" data-name="${name},${sys.country}">
+            <h3 class="city-name" data-name="${name},${sys.country}">
                 <span>${name}</span>
                 <sup>${sys.country}</sup>
-            </h2>
+            </h3>
             <div class="city-temp">${Math.round(main.temp)}<sup>°C</sup>
             </div>
             <figure>
