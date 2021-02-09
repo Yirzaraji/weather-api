@@ -1,3 +1,48 @@
+body{
+    background-color: rgb(67, 40, 140);
+    color: white;
+}
 .fa-sun{
     font-size: 4rem;
 }
+
+.city{
+    background-color: white;
+    display: inline-block;
+    width: 220px;
+    text-align: center;
+    border-radius: 15px;
+    color: black;
+    margin-right: 1%;
+    margin-top: 2%;
+}
+
+.city-name span{
+    font-size: 1.4rem;
+}
+
+.city-name sup{
+    font-size: 0.8rem;
+    background: #ff057a;
+    color: white;
+    font-weight: bold;
+    border-radius: 50%;
+    padding: 3px;
+}
+
+.city-temp{
+    font-size: 3.3rem;
+    font-weight: 900;
+    color: #21282d;
+}
+
+figure{
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.city-temp sup{
+    font-size: 1rem;
+}
+
