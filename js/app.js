@@ -2,68 +2,96 @@ const form = document.querySelector(".top-banner form");
 const input = document.querySelector(".top-banner input");
 const list = document.querySelector(".cities");
 const msg = document.querySelector(".top-banner .msg");
+const clearStorage = document.getElementById("clearStorage");
+console.log(clearStorage);
 
-//test localStorage
-localStorage.setItem('categorie', 'hack');
-var cat = localStorage.getItem('categorie');
-//localStorage.removeItem('categorie');
-console.log(cat)
-console.log(navigator.geolocation)
-var x = document.getElementById("demo");
+//Is loaded after the above code
+window.onload = (event) => {
+  const stringCitiesData = localStorage.getItem("citiesData");
 
-function getLocation() {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(showPosition);
-  } else {
-    x.innerHTML = "Geolocation is not supported by this browser.";
+  if (stringCitiesData === null) {
+    return;
   }
-}
 
-function showPosition(position) {
-  x.innerHTML = "Latitude: " + position.coords.latitude +
-  "<br>Longitude: " + position.coords.longitude;
-}
+  clearStorage.style.display = "inline-block";
 
-form.addEventListener("submit", e => 
-{
-    e.preventDefault();
-    const inputVal = input.value;
-    console.log(inputVal)
-    msg.textContent = "";
-    form.reset();
-    input.focus();
+  const citiesData = JSON.parse(stringCitiesData);
+  console.log({ citiesData });
 
-    const url = `https://api.openweathermap.org/data/2.5/weather?q=${inputVal}&appid=${apiKey}&units=metric`;
+  for (const cityData of citiesData) {
+    renderWeatherCard(cityData);
+  }
 
-    fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            console.log(data)
-            const { main, name, sys, weather } = data;
-            const icon = `https://openweathermap.org/img/wn/${weather[0]["icon"]}@2x.png`;
-            const li = document.createElement("li");
-            li.classList.add("city");
-            const markup = `
-            <h3 class="city-name" data-name="${name},${sys.country}">
-                <span>${name}</span>
-                <sup>${sys.country}</sup>
-            </h3>
-            <div class="city-temp">${Math.round(main.temp)}<sup>°C</sup>
-            </div>
-            <figure>
-                <img class="city-icon" src=${icon} alt=${weather[0]["main"]}>
-                <figcaption>${weather[0]["description"]}</figcaption>
-            </figure>
-            `;
-            li.innerHTML = markup;
-            list.appendChild(li);
-        })
-        .catch(() => {
-            msg.textContent = "Please search for a valid city 😩";
-        });
+  clearStoredData();
+};
 
+const renderWeatherCard = (cityData) => {
+  const { main, name, sys, weatherIcon, weatherMain } = cityData;
+
+  const li = document.createElement("li");
+  li.classList.add("city");
+
+  const icon = `https://openweathermap.org/img/wn/${weatherIcon}@2x.png`;
+  li.innerHTML = `
+    <h3 class="city-name" data-name="${name},${sys}">
+      <span>${name}</span>
+      <sup>${sys}</sup>
+    </h3>
+    <div class="city-temp">${main}<sup>°C</sup></div>
+    <figure>
+      <img class="city-icon" src=${icon} alt=${weatherMain}>
+      <figcaption>${weatherMain}</figcaption>
+    </figure>
+  `;
+
+  list.appendChild(li);
+};
+
+const clearStoredData = () => {
+  clearStorage.addEventListener("click", () => {
+    localStorage.clear();
+    window.location.reload();
+  });
+};
+
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const inputVal = input.value;
+
+  const url = `https://api.openweathermap.org/data/2.5/weather?q=${inputVal}&appid=${apiKey}&units=metric`;
+  fetch(url)
+    .then((response) => response.json())
+    .then((dataApi) => {
+      const { main, name, sys, weather } = dataApi;
+
+      clearStorage.style.display = "inline-block";
+
+      const cityData = {
+        main: Math.round(main.temp),
+        name: name,
+        sys: sys.country,
+        weatherIcon: weather[0]["icon"],
+        weatherMain: weather[0]["main"],
+      };
+
+      const stringCitiesData = localStorage.getItem("citiesData");
+      if (stringCitiesData === null) {
+        localStorage.setItem("citiesData", JSON.stringify([cityData]));
+      } else {
+        const citiesData = JSON.parse(stringCitiesData);
+        const citiesDataWithNewCity = citiesData.concat(cityData);
+        localStorage.setItem(
+          "citiesData",
+          JSON.stringify(citiesDataWithNewCity)
+        );
+      }
+
+      renderWeatherCard(cityData);
+
+      form.reset();
+    })
+    .catch((error) => {
+      console.error(error);
+      msg.textContent = "Wrong city name 😩";
+    });
 });
-
-
-
-    
