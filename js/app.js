@@ -18,11 +18,10 @@ window.onload = (event) => {
   const citiesData = JSON.parse(stringCitiesData);
   console.log({ citiesData });
 
+  clearStoredData();
   for (const cityData of citiesData) {
     renderWeatherCard(cityData);
   }
-
-  clearStoredData();
 };
 
 const renderWeatherCard = (cityData) => {
@@ -49,6 +48,7 @@ const renderWeatherCard = (cityData) => {
 
 const clearStoredData = () => {
   clearStorage.addEventListener("click", () => {
+    console.log("test");
     localStorage.clear();
     window.location.reload();
   });
