@@ -7,6 +7,7 @@ console.log(clearStorage);
 
 //Is loaded after the above code
 window.onload = (event) => {
+  clearStoredData();
   const stringCitiesData = localStorage.getItem("citiesData");
 
   if (stringCitiesData === null) {
@@ -18,7 +19,6 @@ window.onload = (event) => {
   const citiesData = JSON.parse(stringCitiesData);
   console.log({ citiesData });
 
-  clearStoredData();
   for (const cityData of citiesData) {
     renderWeatherCard(cityData);
   }
